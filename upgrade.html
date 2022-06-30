@@ -6,7 +6,7 @@
     <body>
         <div class = 'page'>
             <canvas class='canvas' id = "upCanvas" onclick="clickMain(window.event)" width="500px" height="800px"></canvas>
-            <script src="/node_modules/jquery/scr/jquery.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
             <script>
                 var canvasup = document.querySelector("#upCanvas");
                 var context = canvasup.getContext("2d");
@@ -81,7 +81,7 @@
                     context.font = "30px Arial Bold";
                     context.strokeStyle = "Black";
                     context.strokeText(emerNum, 130, 45);
-                    
+
                     context.font = "30px Arial Bold";
                     context.strokeStyle = "green";
                     context.strokeText('10', 200, 275);
