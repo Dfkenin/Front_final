@@ -73,6 +73,9 @@
                         sList = [];
                         localStorage.setItem("scoreList", JSON.stringify(sList));
                     }
+                    sList.sort(function(a, b){
+                        return b['score'] - a['score'];
+                    });
                     
                     context.strokeText("이름", 100, 150);
                     context.strokeText("점수", 400, 150);
