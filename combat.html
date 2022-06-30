@@ -1,0 +1,430 @@
+<html>
+    <head>
+        <title>Combat</title>
+        <link rel = "stylesheet" href = "combat_stylesheet.css"/>
+    </head>
+    <body>
+        <div class = 'page'>
+            <canvas class = "canvas" id ="combatBg"  width="500px" height="800px"></canvas>
+            <canvas class = "mob" id = "mob" width="500px" height="800px"></canvas>
+            <canvas class = "event" id = "event" onclick="clickCanvas(window.event)" width="500px" height="800px"></canvas>
+            <script src="/node_modules/jquery/scr/jquery.js"></script>
+            <script>
+                var canvas1 = document.querySelector("#combatBg");
+                var contextBg = canvas1.getContext("2d");
+
+                var canvas2 = document.querySelector("#mob");
+                var contextmob = canvas2.getContext("2d");
+
+                var canvas3 = document.querySelector("#event");
+                var contextevent = canvas3.getContext("2d");
+
+                var backImg=new Image();
+                backImg.src="images/combat_bg.png";
+
+                var testBtn=new Image();
+                testBtn.src="images/addBtn.png";
+
+                var testPause=new Image();
+                testPause.src="images/pause.png";
+
+                var gold=new Image();
+                gold.src="images/money.png";
+
+                var dice1=new Image();
+                dice1.src="images/dice1.png";
+                var dice2=new Image();
+                dice2.src="images/dice2.png";
+                var dice3=new Image();
+                dice3.src="images/dice3.png";
+                var dice4=new Image();
+                dice4.src="images/dice4.png";
+                var dice5=new Image();
+                dice5.src="images/dice5.png";
+                var dice6=new Image();
+                dice6.src="images/dice6.png";
+
+                var enemy = new Image();
+                enemy.src="images/enemy.png";
+                var boss = new Image();
+                boss.src="images/boss.png";
+
+                var gover = new Image();
+                gover.src="images/gameOver.png";
+                var pauseScreen = new Image();
+                pauseScreen.src="images/paused.png";
+
+                var ToGame = new Image();
+                ToGame.src="images/ToGame.png";
+                var ToMain = new Image();
+                ToMain.src="images/ToMain.png";
+                var NewGame = new Image();
+                NewGame.src="images/NewGame.png";
+                
+                var enemyList = [];
+
+                var blockList = [];
+                var blankList = [];
+
+                var money = 100;
+                var tPower = 0;
+                var game = true;
+                var pause = false;
+                var score = 0;
+                var count = 0;
+
+                for(var i =0; i<15; ++i){
+                    var obj = {};
+                    obj.x = (i%3)*91.2 + 118;
+                    obj.y = (Math.floor(i/3))*92.5 + 90;
+                    obj.lv = 0;
+                    blockList.push(obj);
+                    blankList.push(obj);
+                }
+                function checkDice(){
+                    for(var i=blankList.length-1;i>=0;--i){
+                        var tmp = blankList[i];
+                        if(tmp.lv == 6){
+                            blankList.splice(i, 1);
+                        }
+                    }
+                }
+                function checkEnemy(){
+                    for(var i=enemyList.length-1;i>=0;--i){
+                        var tmp = enemyList[i];
+                        if(tmp.hp <= 0){
+                            money += tmp.g;
+                            score += Math.floor(tmp.fhp/10);
+                            enemyList.splice(i, 1);
+                        }
+                    }
+                }
+                function randomAdd(){
+                    if (money >= 100){
+                        money -= 100;
+                        var randInd = Math.floor(Math.random()*blankList.length);
+                        var randBlock = blankList[randInd];
+
+                        var basic = JSON.parse(localStorage.getItem('basic'));
+                        if (basic == null){
+                            basic = 0;
+                        }
+                        var upgatt = JSON.parse(localStorage.getItem('upgatt'));
+                        if (upgatt == null){
+                            upgatt = 0;
+                        }
+
+                        randBlock.lv += 1;
+                        tPower += 1;
+                        if (randBlock.lv == 1){
+                            tPower += basic;
+                        }
+                        else if (randBlock.lv == 2) {
+                            tPower += 1 + upgatt;
+                        }
+                        else if (randBlock.lv == 3){
+                            tPower += 1 + upgatt;
+                        }
+                        else if (randBlock.lv == 4){
+                            tPower += 2 + upgatt;
+                        }
+                        else if (randBlock.lv == 5){
+                            tPower += 3 + upgatt;
+                        }
+                        else if (randBlock.lv == 6){
+                            tPower += 5 + upgatt;
+                        }
+                        checkDice();
+                    }
+                }
+
+                contextevent.font = "20px Arial Bold";
+                contextevent.strokeStyle = "Black";
+                contextevent.textAlign = "end";
+
+                function clickCanvas(event){
+                    var evx = event.pageX;
+                    var evy = event.pageY;
+                    if (game){
+                        if ( (evx >= 150) & (evx <= 365) & (evy >= 660) & (evy <= 750)){
+                            randomAdd();
+                        }
+                        if ( (evx >= 467) & (evx <= 500) & (evy >= 20) & (evy <= 53)){
+                            game = false;
+                            pause = true;
+                            contextevent.drawImage(pauseScreen, 25, 250, 450, 300);
+                            contextevent.strokeText(score, 280, 380);
+                            contextevent.drawImage(ToMain, 75, 450, 150, 50);
+                            contextevent.drawImage(ToGame, 275, 450, 150, 50);
+                        }
+                    }
+                    else {
+                        if ( (evx >= 85) & (evx <= 230) & (evy >= 460) & (evy <= 505)){
+                            var max = JSON.parse(localStorage.getItem('maxscore'));
+                            if (max == null){
+                                max = 0;
+                            }
+                            if (score > max){
+                                localStorage.setItem('maxscore', JSON.stringify(score));
+                            }
+                            var emer = JSON.parse(localStorage.getItem('emerald'));
+                            if (emer == null){
+                                emer = 0;
+                            }
+                            emer += Math.floor(score/100);
+                            localStorage.setItem('emerald', JSON.stringify(emer));
+                            location.href = 'main.html';
+                        }
+                        if ( (evx >= 285) & (evx <= 430) & (evy >= 460) & (evy <= 505)){
+                            if(pause){
+                                contextevent.clearRect(0,0,500,800);
+                                game = true;
+                                pause = false;
+                            }
+                            else{
+                                enemyList = [];
+
+                                blockList = [];
+                                blankList = [];
+
+                                money = 100;
+                                tPower = 0;
+                                game = true;
+                                pause = false;
+                                score = 0;
+                                count = 0;
+
+                                for(var i =0; i<15; ++i){
+                                    var obj = {};
+                                    obj.x = (i%3)*91.2 + 118;
+                                    obj.y = (Math.floor(i/3))*92.5 + 90;
+                                    obj.lv = 0;
+                                    blockList.push(obj);
+                                    blankList.push(obj);
+                                }
+                                contextevent.clearRect(0,0,500,800);
+                            }
+                        }
+                    }
+                    
+                }
+
+                function drawDice(){
+                    for(var i=0;i<15;++i){
+                        if(blockList[i].lv == 1){
+                            contextBg.drawImage(dice1, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                        if(blockList[i].lv == 2){
+                            contextBg.drawImage(dice2, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                        if(blockList[i].lv == 3){
+                            contextBg.drawImage(dice3, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                        if(blockList[i].lv == 4){
+                            contextBg.drawImage(dice4, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                        if(blockList[i].lv == 5){
+                            contextBg.drawImage(dice5, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                        if(blockList[i].lv == 6){
+                            contextBg.drawImage(dice6, blockList[i].x, blockList[i].y, 82, 82);
+                        }
+                    }
+                }
+
+                function wave(count){
+                    if (count == 50){
+                        var obj = {};
+                        obj.hp = 100;
+                        obj.fhp = 100;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 50;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 250){
+                        var obj = {};
+                        obj.hp = 500;
+                        obj.fhp = 500;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 50;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 300){
+                        var obj = {};
+                        obj.hp = 600;
+                        obj.fhp = 600;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 100;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 550){
+                        var obj = {};
+                        obj.hp = 800;
+                        obj.fhp = 800;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 100;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 600){
+                        var obj = {};
+                        obj.hp = 900;
+                        obj.fhp = 900;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 100;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 650){
+                        var obj = {};
+                        obj.hp = 1000;
+                        obj.fhp = 1000;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 150;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 1000){
+                        var obj = {};
+                        obj.hp = 2000;
+                        obj.fhp = 2000;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 50;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 1050){
+                        var obj = {};
+                        obj.hp = 2500;
+                        obj.fhp = 2500;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 100;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 1100){
+                        var obj = {};
+                        obj.hp = 3500;
+                        obj.fhp = 3500;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 200;
+                        obj.boss = false;
+                        enemyList.push(obj);
+                    }
+                    if (count == 1200){
+                        var obj = {};
+                        obj.hp = 6000;
+                        obj.fhp = 6000;
+                        obj.speed = 10;
+                        obj.x = 56;
+                        obj.y = 0;
+                        obj.g = 500;
+                        obj.boss = true;
+                        enemyList.push(obj);
+                    }
+                }
+
+                function gameOver(){
+                    game = false;
+                    contextmob.clearRect(0,0,500,800);
+                    contextevent.drawImage(gover, 25, 250, 450, 300);
+                    contextevent.strokeText(score, 280, 380);
+                    contextevent.drawImage(ToMain, 75, 450, 150, 50);
+                    contextevent.drawImage(NewGame, 275, 450, 150, 50);
+                    var max = JSON.parse(localStorage.getItem('maxscore'));
+                    if (max == null){
+                        max = 0;
+                    }
+                    if (score > max){
+                        localStorage.setItem('maxscore', JSON.stringify(score));
+                    }
+                    var emer = JSON.parse(localStorage.getItem('emerald'));
+                    if (emer == null){
+                        emer = 0;
+                    }
+                    emer += Math.floor(score/100);
+                    localStorage.setItem('emerald', JSON.stringify(emer));
+                }
+                function updatePos(count){
+                    for(var i=0;i<enemyList.length;++i){
+                        if (enemyList[i].boss){
+                        contextmob.drawImage(boss, enemyList[i].x, enemyList[i].y, 40, 40);
+                        }
+                        else{
+                            contextmob.drawImage(enemy, enemyList[i].x, enemyList[i].y, 40, 40);
+                        }
+                        if ((enemyList[i].y < 573) & (enemyList[i].x == 56)){
+                            enemyList[i].y += 1;
+                        }
+                        else if ((enemyList[i].y == 573) & (enemyList[i].x < 410)){
+                            enemyList[i].x += 1;
+                        }
+                        else if ((enemyList[i].y > 0) & (enemyList[i].x == 410)){
+                            enemyList[i].y -= 1;
+                        }
+                        else{
+                            gameOver();
+                        }
+                    }
+                }
+                function attackEnemy(){
+                    var power = tPower;
+                    for(var i=0;i<enemyList.length;++i){
+                        if (power <= enemyList[i].hp){
+                            enemyList[i].hp -= power;
+                            power = 0;
+                        }
+                        else{
+                            power -= enemyList[i].hp;
+                            enemyList[i].hp = 0;
+                        }
+                    }
+                    checkEnemy();
+                }
+                contextBg.font = "20px Arial Bold";
+                contextBg.strokeStyle = "Black";
+                contextBg.textAlign = "end";
+                
+                setInterval(function(){
+                    if(game){
+                        ++count;
+                        contextBg.clearRect(0,0,500,800);
+                        contextmob.clearRect(0,0,500,800);
+                        
+                        wave(count);
+                        updatePos(count);
+                        contextBg.drawImage(backImg, 0, 0, 500, 800);
+                        contextBg.drawImage(testBtn, 143, 650, 215, 90);
+                        contextBg.drawImage(gold, 325, 3, 20, 20);
+                        contextBg.strokeText(money, 320, 20);
+                        contextBg.strokeText(score, 170, 20);
+                        drawDice(); 
+
+                        attackEnemy();
+                    }
+                }, 20)
+            </script>
+        </div>
+    </body>
+</html>

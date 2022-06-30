@@ -1,0 +1,9 @@
+.page{
+    width:500px;
+    height:800px;
+    position: relative;
+}
+.canvas{
+    border: solid black;
+    position:absolute;
+}

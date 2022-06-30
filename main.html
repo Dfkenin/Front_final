@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Main</title>
+        <link rel = "stylesheet" href = "main_stylesheet.css"/>
+    </head>
+    <body>
+        <div class = 'mainpage'>
+            <canvas class="canvas2" id = "mainCanvas" onclick="clickMain(window.event)" width="500px" height="800px"></canvas>
+            <script src="/node_modules/jquery/scr/jquery.js"></script>
+            <script>
+                var canvasmain = document.querySelector("#mainCanvas");
+                var context = canvasmain.getContext("2d");
+
+                var mainbg = new Image();
+                mainbg.src = "images/mainbg.png";
+
+                var newgame = new Image();
+                newgame.src = "images/mainnew.png";
+
+                var upgrade = new Image();
+                upgrade.src = "images/mainupg.png";
+
+                var scoreboard = new Image();
+                scoreboard.src = "images/mainsc.png";
+
+                var emer = new Image();
+                emer.src = "images/emer.png";
+
+                function clickMain(event){
+                    var evx = event.pageX;
+                    var evy = event.pageY;
+                    if ( (evx >= 100) & (evx <= 400) & (evy >= 360) & (evy <= 425)){
+                        location.href = 'combat.html';
+                    }
+                    if ( (evx >= 100) & (evx <= 400) & (evy >= 460) & (evy <= 525)){
+                        location.href = 'upgrade.html';
+                    }
+                    if ( (evx >= 100) & (evx <= 400) & (evy >= 560) & (evy <= 625)){
+                        location.href = 'scoreboard.html';
+                    }
+                }
+                context.font = "30px Arial Bold";
+                context.strokeStyle = "Black";
+                setInterval(function(){
+                    context.clearRect(0,0,500,800);
+                    context.drawImage(mainbg,0,0,500,800);
+                    context.drawImage(newgame,90,350,300,70);
+                    context.drawImage(upgrade,90,450,300,70);
+                    context.drawImage(scoreboard,90,550,300,70);
+                    context.drawImage(emer,100, 20, 15, 30);
+
+                    var emerNum = JSON.parse(localStorage.getItem('emerald'));
+                    if (emerNum == null){
+                        emerNum = 0;
+                    }
+                    localStorage.setItem('emerald', JSON.stringify(emerNum));
+                    context.strokeText(emerNum, 130, 45);
+                }, 20)
+                
+            </script>
+        </div>
+    </body>
+</html>

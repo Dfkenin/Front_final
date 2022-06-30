@@ -1,0 +1,22 @@
+.page{
+    width:500px;
+    height:800px;
+    position: relative;
+}
+.canvas{
+    position: absolute;
+    border: solid black;
+}
+.mob{
+    position: absolute;
+}
+.event{
+    position: absolute;
+}
+.addBtn{
+    font-size: larger;
+    left: 100px;
+    top: 700px;
+    width: 300px;
+    height: 100px;
+}

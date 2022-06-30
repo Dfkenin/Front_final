@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <title>Scoreboard</title>
+        <link rel = "stylesheet" href = "score_stylesheet.css"/>
+    </head>
+    <body>
+        <div class = 'page'>
+            <canvas class='canvas' id = "sboardCanvas" onclick="clickMain(window.event)" width="500px" height="800px"></canvas>
+            <script src="/node_modules/jquery/scr/jquery.js"></script>
+            <script>
+                var canvasmain = document.querySelector("#sboardCanvas");
+                var context = canvasmain.getContext("2d");
+
+                var ToMain = new Image();
+                ToMain.src="images/ToMain.png";
+
+                var nameImg = new Image();
+                nameImg.src="images/name.png";
+
+                var save = new Image();
+                save.src="images/save.png";
+                
+
+
+                function clickMain(event){
+                    var evx = event.pageX;
+                    var evy = event.pageY;
+                    if ( (evx >= 155) & (evx <= 365) & (evy >= 660) & (evy <= 730)){
+                        location.href = 'main.html';
+                    }
+                    if ( (evx >= 360) & (evx <= 410) & (evy >= 108) & (evy <= 138)){
+                        var scoreList = JSON.parse(localStorage.getItem("scoreList"));
+                        if (scoreList == null){
+                            scoreList = [];
+                        }
+                        var name = document.getElementById("id").value;
+                        if (name != ''){
+                            var max = JSON.parse(localStorage.getItem('maxscore'));
+                            var entry = {
+                                "name" : name,
+                                "score" : max
+                            };
+                            localStorage.setItem("entry", JSON.stringify(entry));
+                            if (scoreList.length < 9){
+                                scoreList.push(entry);
+                            }
+                            else{
+                                scoreList.push(entry);
+                                scoreList.sort(function(a, b){
+                                    return b['score'] - a['score'];
+                                });
+                                scoreList.splice(9, 1);
+                            }
+                        }
+                        localStorage.setItem("scoreList", JSON.stringify(scoreList));
+                    }
+                }
+
+                context.font = "20px Arial Bold";
+                context.strokeStyle = "Black";
+
+                setInterval(function(){
+                    context.clearRect(0,0,500,800);
+                    context.drawImage(ToMain, 143, 650, 215, 70);
+                    context.drawImage(nameImg, 100, 60, 300, 50);
+                    context.drawImage(save, 350, 98, 50, 30);
+
+                    var sList = JSON.parse(localStorage.getItem("scoreList"));
+                    if (sList == null){
+                        sList = [];
+                        localStorage.setItem("scoreList", JSON.stringify(sList));
+                    }
+                    
+                    context.strokeText("이름", 100, 150);
+                    context.strokeText("점수", 400, 150);
+                    var y = 200;
+                    for(var i=0;i<sList.length;++i){
+                        context.strokeText(sList[i]['name'], 100, y);
+                        context.strokeText(sList[i]['score'], 400, y);
+                        y += 50;
+                    }
+                }, 20)
+                
+            </script>
+            <input type = "text" class = "input" id = "id">
+        </div>
+    </body>
+</html>

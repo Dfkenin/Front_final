@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>Upgrade</title>
+        <link rel = "stylesheet" href = "upgrade_stylesheet.css"/>
+    </head>
+    <body>
+        <div class = 'page'>
+            <canvas class='canvas' id = "upCanvas" onclick="clickMain(window.event)" width="500px" height="800px"></canvas>
+            <script src="/node_modules/jquery/scr/jquery.js"></script>
+            <script>
+                var canvasup = document.querySelector("#upCanvas");
+                var context = canvasup.getContext("2d");
+
+                var ToMain = new Image();
+                ToMain.src="images/ToMain.png";
+
+                var emer = new Image();
+                emer.src = "images/emer.png";
+
+                var att = new Image();
+                att.src = "images/attackupg.png";
+
+                var upg = new Image();
+                upg.src = "images/upgupg.png";
+
+
+                function clickMain(event){
+                    var evx = event.pageX;
+                    var evy = event.pageY;
+                    if ( (evx >= 155) & (evx <= 365) & (evy >= 660) & (evy <= 730)){
+                        location.href = 'main.html';
+                    }
+                    if ( (evx >= 155) & (evx <= 365) & (evy >= 210) & (evy <= 280)){
+                        var emerNum = JSON.parse(localStorage.getItem('emerald'));
+                        if (emerNum == null){
+                            emerNum = 0;
+                        }
+                        if (emerNum >= 10){
+                            var basic = JSON.parse(localStorage.getItem('basic'));
+                            if (basic == null){
+                                basic = 0;
+                            }
+                            basic += 1;
+                            localStorage.setItem('basic', JSON.stringify(basic));
+
+                            emerNum -= 10;
+                            localStorage.setItem('emerald', JSON.stringify(emerNum));
+                        }
+                    }
+                    if ( (evx >= 155) & (evx <= 365) & (evy >= 360) & (evy <= 430)){
+                        var emerNum = JSON.parse(localStorage.getItem('emerald'));
+                        if (emerNum == null){
+                            emerNum = 0;
+                        }
+                        if (emerNum >= 50){
+                            var upgatt = JSON.parse(localStorage.getItem('upgatt'));
+                            if (upgatt == null){
+                                upgatt = 0;
+                            }
+                            upgatt += 1;
+                            localStorage.setItem('upgatt', JSON.stringify(upgatt));
+
+                            emerNum -= 50;
+                            localStorage.setItem('emerald', JSON.stringify(emerNum));
+                        }
+                    }
+                }
+
+                setInterval(function(){
+                    context.clearRect(0,0,500,800);
+                    context.drawImage(ToMain, 143, 650, 215, 70);
+                    context.drawImage(emer,100, 20, 15, 30);
+                    context.drawImage(att, 143, 200, 215, 90);
+                    context.drawImage(upg, 143, 350, 215, 90);
+
+                    var emerNum = JSON.parse(localStorage.getItem('emerald'));
+                    if (emerNum == null){
+                        emerNum = 0;
+                    }
+                    localStorage.setItem('emerald', JSON.stringify(emerNum));
+                    context.font = "30px Arial Bold";
+                    context.strokeStyle = "Black";
+                    context.strokeText(emerNum, 130, 45);
+                    
+                    context.font = "30px Arial Bold";
+                    context.strokeStyle = "green";
+                    context.strokeText('10', 200, 275);
+                    context.strokeText('50', 200, 425);
+                    
+                }, 20)
+                
+            </script>
+        </div>
+    </body>
+</html>
