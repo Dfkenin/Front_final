@@ -182,6 +182,19 @@
                                 pause = false;
                             }
                             else{
+                                var max = JSON.parse(localStorage.getItem('maxscore'));
+                                if (max == null){
+                                    max = 0;
+                                }
+                                if (score > max){
+                                    localStorage.setItem('maxscore', JSON.stringify(score));
+                                }
+                                var emer = JSON.parse(localStorage.getItem('emerald'));
+                                if (emer == null){
+                                    emer = 0;
+                                }
+                                emer += Math.floor(score/100);
+                                localStorage.setItem('emerald', JSON.stringify(emer));
                                 enemyList = [];
 
                                 blockList = [];

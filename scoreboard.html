@@ -52,6 +52,9 @@
                                 scoreList.splice(9, 1);
                             }
                         }
+                        scoreList.sort(function(a, b){
+                            return b['score'] - a['score'];
+                        });
                         localStorage.setItem("scoreList", JSON.stringify(scoreList));
                     }
                 }
